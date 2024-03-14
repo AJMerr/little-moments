@@ -1,3 +1,5 @@
 # Little Moments
 
-TODO
+![Project Diagram][./img/SoftwareDiagramV1.png]
+
+This is a test
