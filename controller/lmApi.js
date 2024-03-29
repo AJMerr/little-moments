@@ -2,10 +2,14 @@ import { PrismaClient } from "@prisma/client";
 import express from "express";
 import multer from "multer";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import crypto from "crypto";
 import dotenv from "dotenv";
 
 // Read the .env file
 dotenv.config()
+
+// Randomly generates an image name that is a 32 byte hex string
+const randImageName = () => crypto.randomBytes(32).toString("hex")
 
 // Creates variables to access the AWS S3 bucket
 const BUCKET_NAME = process.env.BUCKET_NAME
@@ -22,6 +26,8 @@ const upload = multer({ storage: storage })
 
 // Creates Prisma client
 const prisma = new PrismaClient()
+
+const imageName = randImageName()
 
 // Creates an S3 client
 const s3 = new S3Client({
@@ -41,7 +47,7 @@ lmRouter.post("/api", upload.single("image"), async (req, res) => {
 
   const params = {
     Bucket: BUCKET_NAME,
-    Key: req.file.originalname,
+    Key: imageName,
     Body: req.file.buffer,
     ContentType: req.file.mimetype
   }
@@ -49,7 +55,14 @@ lmRouter.post("/api", upload.single("image"), async (req, res) => {
   const command = new PutObjectCommand(params)
   await s3.send(command)
 
-  res.send({})
+  const imageData = await prisma.photo.create({
+    data: {
+      title: req.body.title,
+      description: req.body.description,
+      s3Key: imageName
+    }
+  })
+  res.send(imageData)
 })
 
 lmRouter.get("/api", async (req, res) => {
