@@ -1,7 +1,8 @@
 import { PrismaClient } from "@prisma/client";
 import express from "express";
 import multer from "multer";
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import { S3Client, PutObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import crypto from "crypto";
 import dotenv from "dotenv";
 
@@ -67,9 +68,20 @@ lmRouter.post("/api", upload.single("image"), async (req, res) => {
 
 lmRouter.get("/api", async (req, res) => {
   try {
+    const photos = await prisma.photo.findMany()
+
+    for (let photo of photos) {
+      const command = new GetObjectCommand({
+        Bucket: BUCKET_NAME,
+        Key: photo.s3Key
+      })
+      const url = await getSignedUrl(s3, command, { expiresIn: 3600 })
+      photo.s3Url = url
+    }
+    res.send(photos)
 
   } catch (error) {
-
+    console.error(error)
   }
 })
 
