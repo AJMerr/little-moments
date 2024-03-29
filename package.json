@@ -5,15 +5,20 @@
   "description": "Little Moments is a full stack application for the purpose of saving every moment. This is a passion project as a way for my family to save photos of our journey in life together. The purpose is to have complete control over the pictures and data, give access to other fmaily members, and for use for IoT devices such as a digital picture frame.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "concurrently \"nodemon server.js\" \"cd client && npm start\""
   },
   "author": "Austin Merrill",
   "license": "ISC",
   "dependencies": {
     "@aws-sdk/client-s3": "^3.537.0",
     "@prisma/client": "^5.11.0",
+    "concurrently": "^8.2.2",
     "dotenv": "^16.4.5",
-    "express": "^4.18.3"
+    "express": "^4.18.3",
+    "nodemon": "^3.1.0",
+    "react": "^18.2.0",
+    "react-router-dom": "^6.22.3"
   },
   "devDependencies": {
     "@tsconfig/node21": "^21.0.1",
