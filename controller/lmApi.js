@@ -11,7 +11,7 @@ dotenv.config()
 const BUCKET_NAME = process.env.BUCKET_NAME
 const BUCKET_REGION = process.env.BUCKET_REGION
 const ACCESS_KEY = process.env.ACCESS_KEY
-const SECRET_KEY = process.env.SECRET_KEY
+const SECRET_ACCESS_KEY = process.env.SECRET_ACCESS_KEY
 
 // Creates an express router for basic LM API functionality 
 const lmRouter = express.Router()
@@ -27,7 +27,7 @@ const prisma = new PrismaClient()
 const s3 = new S3Client({
   credentials: {
     accessKeyId: ACCESS_KEY,
-    secretAccessKey: SECRET_KEY,
+    secretAccessKey: SECRET_ACCESS_KEY,
   },
   region: BUCKET_REGION
 })
