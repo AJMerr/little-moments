@@ -24,6 +24,7 @@ model Photo {
     id Int @id @default(autoincrement())
     title String
     description String
+    s3Key String
     createdAt DateTime @default(now())
     albums Album[]
   }
