@@ -48,9 +48,9 @@ lmRouter.post("/api", upload.single("image"), async (req, res) => {
 
   const params = {
     Bucket: BUCKET_NAME,
-    Key: imageName,
+    Key: imageName + "." + req.file.mimetype.split(".")[1],
     Body: req.file.buffer,
-    ContentType: req.file.mimetype
+    ContentType: req.file.mimetype,
   }
 
   const command = new PutObjectCommand(params)
@@ -60,7 +60,7 @@ lmRouter.post("/api", upload.single("image"), async (req, res) => {
     data: {
       title: req.body.title,
       description: req.body.description,
-      s3Key: imageName
+      s3Key: imageName + "." + req.file.mimetype.split(".")[1]
     }
   })
   res.send(imageData)
