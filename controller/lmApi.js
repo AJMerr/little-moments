@@ -28,8 +28,6 @@ const upload = multer({ storage: storage })
 // Creates Prisma client
 const prisma = new PrismaClient()
 
-const imageName = randImageName()
-
 // Creates an S3 client
 const s3 = new S3Client({
   credentials: {
@@ -41,6 +39,7 @@ const s3 = new S3Client({
 
 // API route for uploading images
 lmRouter.post("/api", upload.single("image"), async (req, res) => {
+  const imageName = randImageName(req.file.originalname)
   console.log("req.body", req.body)
   console.log("req.file", req.file)
 
@@ -48,7 +47,7 @@ lmRouter.post("/api", upload.single("image"), async (req, res) => {
 
   const params = {
     Bucket: BUCKET_NAME,
-    Key: imageName + "." + req.file.mimetype.split(".")[1],
+    Key: imageName + "." + req.file.mimetype.split("/")[1],
     Body: req.file.buffer,
     ContentType: req.file.mimetype,
   }
@@ -60,7 +59,7 @@ lmRouter.post("/api", upload.single("image"), async (req, res) => {
     data: {
       title: req.body.title,
       description: req.body.description,
-      s3Key: imageName + "." + req.file.mimetype.split(".")[1]
+      s3Key: imageName + "." + req.file.mimetype.split("/")[1]
     }
   })
   res.send(imageData)
