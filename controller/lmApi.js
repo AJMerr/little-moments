@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import express from "express";
 import multer from "multer";
-import { S3Client, PutObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
+import { S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import crypto from "crypto";
 import dotenv from "dotenv";
@@ -65,6 +65,7 @@ lmRouter.post("/api", upload.single("image"), async (req, res) => {
   res.send(imageData)
 })
 
+// API route for getting all images
 lmRouter.get("/api", async (req, res) => {
   try {
     const photos = await prisma.photo.findMany()
@@ -78,6 +79,38 @@ lmRouter.get("/api", async (req, res) => {
       photo.s3Url = url
     }
     res.send(photos)
+
+  } catch (error) {
+    console.error(error)
+  }
+})
+
+// API Route for extracting image data
+lmRouter.put("/api/:id", async (req, res) => {
+  try {
+
+  } catch (error) {
+
+  }
+})
+
+// API route for deleting an image
+lmRouter.delete("/api/:id", async (req, res) => {
+  try {
+    const id = +req.params.id
+    const photo = await prisma.photo.findUnique({ where: { id } })
+
+    const s3DeleteParams = {
+      Bucket: BUCKET_NAME,
+      Key: photo.s3Key
+    }
+
+    // Deletes image from S3
+    s3.send(new DeleteObjectCommand(s3DeleteParams))
+
+    // Deletes image from Postgres DB 
+    await prisma.photo.delete({ where: { id } })
+    res.send(photo)
 
   } catch (error) {
     console.error(error)
