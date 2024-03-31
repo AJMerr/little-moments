@@ -88,9 +88,13 @@ lmRouter.get("/api", async (req, res) => {
 // API Route for extracting image data
 lmRouter.put("/api/:id", async (req, res) => {
   try {
+    const id = +req.params.id
+    const updatedPhoto = await prisma.photo.update({ where: { id }, data: req.body })
+
+    res.send(updatedPhoto)
 
   } catch (error) {
-
+    console.error(error)
   }
 })
 
