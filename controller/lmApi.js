@@ -85,6 +85,29 @@ lmRouter.get("/api", async (req, res) => {
   }
 })
 
+// API route to get an image by ID
+lmRouter.get("/api/:id", async (req, res) => {
+  try {
+    const id = +req.params.id
+    const singlePhoto = await prisma.photo.findUnique({ where: { id }})
+
+    // Gets the singed URL from S3 for a single image
+    const command = new GetObjectCommand ({
+      Bucket: BUCKET_NAME,
+      Key: singlePhoto.s3Key
+    })
+    
+    const url = await getSignedUrl(s3, command, { expiresIn: 3600 })
+    singlePhoto.s3Url = url
+
+    // Sends back the single photo's metadata + the signed URL for the image from S3.
+    res.send(singlePhoto)
+
+  } catch (error) {
+    console.error(error)
+  }
+})
+
 // API Route for extracting image data
 lmRouter.put("/api/:id", async (req, res) => {
   try {
