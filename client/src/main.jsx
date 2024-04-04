@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import Homepage from './routes/Homepage'
 import './index.css'
+import SinglePhoto from './routes/SinglePhoto'
 
 const router = createBrowserRouter([
   {
@@ -10,8 +11,8 @@ const router = createBrowserRouter([
     element: <Homepage />,
   },
   {
-    path: "/about",
-    element: <div>This is also a test</div>,
+    path: "/:id",
+    element: <SinglePhoto />
   }
 ])
 
