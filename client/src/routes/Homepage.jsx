@@ -5,13 +5,13 @@ function Homepage() {
   const [file, setFile] = useState()
   const [title, setTitle] = useState()
   const [description, setDescription] = useState()
-  const  [image, images] = useState([])
+  const [images, setImages] = useState([])
 
   useEffect(() => {
     const fetchAllImages = async () => {
       try {
-        const res = await axios.get("/api")
-        images(res.data)
+        const res = await axios.get("http://localhost:8080/api")
+        setImages(res.data)
       } catch (error) {
         console.error(error)
       }
@@ -26,7 +26,7 @@ function Homepage() {
     formData.append("image", file)
     formData.append("title", title)
     formData.append("description", description)
-    await axios.post("/api", formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+    await axios.post("http://localhost:8080/api", formData, { headers: { 'Content-Type': 'multipart/form-data' } })
   }
 
   return (
@@ -38,9 +38,13 @@ function Homepage() {
         <button type="submit">Submit</button>
       </form>
 
-      {image.map((val, key) => {
+      {images.map((val, key) => {
         return (
-          <img src={val.s3Url} alt="test"/>
+        <div>
+            <img src={val.s3Url} alt="test" key={key} height="800" width="600"/>
+            <h3>{val.title}</h3>
+            <p>{val.description}</p>
+        </div>
         )
       })}
 

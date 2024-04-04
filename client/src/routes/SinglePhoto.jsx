@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react"
 import axios from "axios"
 import { useParams } from "react-router-dom"
 
-function GetOnePhoto () {
+function SinglePhoto () {
 
     // Sets the intiial state
     const initialState = {
@@ -16,11 +16,11 @@ function GetOnePhoto () {
 
     const { id } = useParams()
 
-    const {singlePhoto, setPhoto} = useState(initialState)
+    const [singlePhoto, setPhoto] = useState(initialState)
 
     const fetchImage = async (id) => {
         try {
-            const res = await axios.get(`/api/${id}`)
+            const res = await axios.get(`http://localhost:8080/api/${id}`)
             setPhoto(res.data)
         } catch (error) {
             console.error(error)
@@ -34,9 +34,11 @@ function GetOnePhoto () {
 
     return (
         <div>
-            <img src={singlePhoto.s3Url} />
+            <img src={singlePhoto.s3Url} alt={singlePhoto.title} />
+            <h3>{singlePhoto.title}</h3>
+            <p>{singlePhoto.description}</p>
         </div>
     )
 }
 
-export default GetOnePhoto
+export default SinglePhoto
