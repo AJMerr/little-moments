@@ -33,11 +33,10 @@ resource "aws_s3_bucket_policy" "lm_prod_bucket_policy" {
 
 resource "aws_s3_bucket_cors_configuration" "lm_prod_bucket_cors_configuration" {
     bucket = aws_s3_bucket.lm_prod_bucket.id
-    cors_rule = [
-        {
-            allowed_headers = ["Authorization"]
-            allowed_methods = ["GET", "POST", "PUT", "DELETE", "HEAD"]
-            allowed_origins = ["*"]
-        }
-    ]
+
+    cors_rule {
+        allowed_headers = ["Authorization"]
+        allowed_methods = ["GET", "POST", "PUT", "DELETE", "HEAD"]
+        allowed_origins = ["*"]
+    }
 }
