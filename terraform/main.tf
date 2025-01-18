@@ -50,3 +50,133 @@ resource "aws_s3_bucket_cors_configuration" "lm_prod_bucket_cors_configuration" 
         allowed_origins = ["*"]
     }
 }
+
+resource "aws_instance" "lm_prod_instance" {
+  ami = data.aws_ami.ubuntu.id
+  instance_type = "t2.micro"
+  key_name = var.key_pair_name
+  vpc_security_group_ids = [aws_security_group.lm_prod_security_group.id]
+  tags = {
+    Name = "lm_prod_instance"
+  }
+}
+
+data "aws_ami" "ubuntu" {
+  most_recent = true
+  owners = ["099720109477"]
+
+  filter {
+    name = "name"
+    values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"]
+  }
+}
+
+// Add this data source to get the default VPC
+data "aws_vpc" "default" {
+  default = true
+}
+
+resource "aws_security_group" "lm_prod_security_group" {
+  name = "lm_prod_security_group"
+  description = "Security group for HTTP and SSH access"
+  vpc_id = data.aws_vpc.default.id
+
+  ingress {
+    from_port = 80
+    to_port = 80
+    protocol = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port = 22
+    to_port = 22
+    protocol = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {    
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "lm_prod_security_group"
+  }
+}
+
+resource "aws_security_group" "rds_security_group" {
+  name = "rds_security_group"
+  description = "Security group for RDS"
+  vpc_id = data.aws_vpc.default.id
+
+  ingress {
+    from_port = 5432
+    to_port = 5432
+    protocol = "tcp"
+    cidr_blocks = ["172.31.0.0/16"]
+  }
+
+  egress {
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "rds_security_group"
+  }
+}
+
+resource "aws_db_instance" "lm_prod_rds" {
+  allocated_storage = 20
+  engine = "postgres"
+  engine_version = "16.3"
+  instance_class = "db.t3.micro"
+  db_name = "lm_prod_db"
+  username = var.db_username
+  password = var.db_password
+  parameter_group_name = "default.postgres16"
+  publicly_accessible = false
+  vpc_security_group_ids = [aws_security_group.rds_security_group.id]
+
+  tags = {
+    Name = "lm_prod_rds"
+  }
+}
+
+data "aws_availability_zones" "available" {
+  state = "available"
+}
+
+resource "aws_subnet" "lm_prod_subnet_1" {
+  vpc_id     = data.aws_vpc.default.id
+  cidr_block = "172.31.128.0/20" 
+  availability_zone = data.aws_availability_zones.available.names[0]
+
+  tags = {
+    Name = "lm_prod_subnet"
+  }
+}
+
+resource "aws_subnet" "lm_prod_subnet_2" {
+  vpc_id     = data.aws_vpc.default.id
+  cidr_block = "172.31.112.0/20" 
+  availability_zone = data.aws_availability_zones.available.names[1]
+
+  tags = {
+    Name = "lm_prod_subnet_2"
+  }
+}
+
+resource "aws_db_subnet_group" "lm_prod_subnet_group" {
+  name = "lm_prod_subnet_group"
+  subnet_ids = [aws_subnet.lm_prod_subnet_1.id, aws_subnet.lm_prod_subnet_2.id]
+
+  tags = {
+    Name = "lm_prod_subnet_group"
+  }
+}
