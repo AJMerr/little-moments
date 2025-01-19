@@ -140,7 +140,7 @@ resource "aws_db_instance" "lm_prod_rds" {
   username = var.db_username
   password = var.db_password
   parameter_group_name = "default.postgres16"
-  publicly_accessible = false
+  publicly_accessible = true
   vpc_security_group_ids = [aws_security_group.rds_security_group.id]
 
   tags = {
