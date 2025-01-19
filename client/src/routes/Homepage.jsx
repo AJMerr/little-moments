@@ -10,7 +10,7 @@ function Homepage() {
   useEffect(() => {
     const fetchAllImages = async () => {
       try {
-        const res = await axios.get("/api")
+        const res = await axios.get("/api/")
         setImages(res.data)
       } catch (error) {
         console.error(error)
@@ -26,7 +26,7 @@ function Homepage() {
     formData.append("image", file)
     formData.append("title", title)
     formData.append("description", description)
-    await axios.post("/api", formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+    await axios.post("/api/", formData, { headers: { 'Content-Type': 'multipart/form-data' } })
   }
 
   return (
