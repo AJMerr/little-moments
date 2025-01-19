@@ -45,9 +45,11 @@ resource "aws_s3_bucket_cors_configuration" "lm_prod_bucket_cors_configuration" 
     bucket = aws_s3_bucket.lm_prod.id
 
     cors_rule {
-        allowed_headers = ["Authorization"]
+        allowed_headers = ["*"]
         allowed_methods = ["GET", "POST", "PUT", "DELETE", "HEAD"]
         allowed_origins = ["*"]
+        expose_headers = ["ETag"]
+        max_age_seconds = 3000
     }
 }
 
