@@ -10,7 +10,7 @@ function Homepage() {
   useEffect(() => {
     const fetchAllImages = async () => {
       try {
-        const res = await axios.get("http://littlemoments.cloud/api")
+        const res = await axios.get("/api")
         setImages(res.data)
       } catch (error) {
         console.error(error)
