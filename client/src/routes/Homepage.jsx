@@ -26,7 +26,7 @@ function Homepage() {
     formData.append("image", file)
     formData.append("title", title)
     formData.append("description", description)
-    await axios.post("http://localhost:8080/api", formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+    await axios.post("/api", formData, { headers: { 'Content-Type': 'multipart/form-data' } })
   }
 
   return (

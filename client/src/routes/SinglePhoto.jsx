@@ -20,7 +20,7 @@ function SinglePhoto () {
 
     const fetchImage = async (id) => {
         try {
-            const res = await axios.get(`http://localhost:8080/api/${id}`)
+            const res = await axios.get(`/api/${id}`)
             setPhoto(res.data)
         } catch (error) {
             console.error(error)
