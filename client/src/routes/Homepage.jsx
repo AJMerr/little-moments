@@ -51,28 +51,11 @@ function Homepage() {
 
       {images.map((val, key) => {
         return (
-          <div key={key} style={{ marginBottom: '20px', padding: '10px', border: '1px solid #ccc' }}>
-            {val.s3Url && (
-              <img src={val.s3Url} alt="test" height="800" width="600"/>
-            )}
+          <div key={key}>
+            <img src={val.s3Url} alt="test" height="800" width="600"/>
             <h3>{val.title}</h3>
             <p>{val.description}</p>
-            <button 
-              onClick={() => handleDelete(val.id)}
-              style={{
-                display: 'block !important',
-                margin: '10px 0',
-                padding: '8px 16px',
-                backgroundColor: '#ff4444 !important',
-                color: 'white !important',
-                border: '1px solid #ff4444 !important',
-                borderRadius: '4px',
-                cursor: 'pointer',
-                opacity: '1 !important',
-                visibility: 'visible !important',
-                position: 'relative !important'
-              }}
-            >
+            <button onClick={() => handleDelete(val.id)}>
               Delete
             </button>
           </div>
