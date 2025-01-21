@@ -201,10 +201,12 @@ resource "aws_cognito_user_pool" "little_moments_pool" {
     email_sending_account = "COGNITO_DEFAULT"
   }
 
+  auto_verified_attributes = ["email"]
+
   verification_message_template {
     default_email_option = "CONFIRM_WITH_CODE"
     email_subject = "Your Little Moments verification code"
-    email_message = "Your verification code is {####}"
+    email_message = "Thank you for registering with Little Moments! Your verification code is {####}"
   }
 
   schema {

@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { signUp, confirmSignUp } from 'aws-amplify/auth'
+import { signUp, confirmSignUp, signIn } from 'aws-amplify/auth'
 import { useNavigate } from 'react-router-dom'
 
 function Register() {
@@ -32,9 +32,14 @@ function Register() {
           username: email,
           confirmationCode
         })
-        navigate('/login')
+        await signIn({
+          username: email,
+          password
+        })
+        navigate('/')
       }
     } catch (error) {
+      console.error('Error:', error)
       setError(error.message)
     }
   }
