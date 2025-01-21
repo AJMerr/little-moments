@@ -58,11 +58,23 @@ function Homepage() {
             <h3>{val.title}</h3>
             <p>{val.description}</p>
             <button 
-            onClick={() => handleDelete(val.id)}
-            style={{display: 'block', margin: '10px 0'}}
-          >
-            Delete
-          </button>
+              onClick={() => handleDelete(val.id)}
+              style={{
+                display: 'block !important',
+                margin: '10px 0',
+                padding: '8px 16px',
+                backgroundColor: '#ff4444 !important',
+                color: 'white !important',
+                border: '1px solid #ff4444 !important',
+                borderRadius: '4px',
+                cursor: 'pointer',
+                opacity: '1 !important',
+                visibility: 'visible !important',
+                position: 'relative !important'
+              }}
+            >
+              Delete
+            </button>
           </div>
         )
       })}
