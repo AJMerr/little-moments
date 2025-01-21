@@ -132,12 +132,13 @@ lmRouter.delete("/api/:id", async (req, res) => {
       Key: photo.s3Key
     }
 
-    // Deletes image from S3
-    s3.send(new DeleteObjectCommand(s3DeleteParams))
+    // Delete image from S3 first
+    await s3.send(new DeleteObjectCommand(s3DeleteParams))
 
-    // Deletes image from Postgres DB 
-    await prisma.photo.delete({ where: { id } })
-    res.send(photo)
+    // Then delete from database
+    const deletedPhoto = await prisma.photo.delete({ where: { id } })
+    
+    res.send(deletedPhoto)
 
   } catch (error) {
     console.error(error)
