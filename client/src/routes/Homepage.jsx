@@ -55,7 +55,12 @@ function Homepage() {
             <img src={val.s3Url} alt="test" height="800" width="600"/>
             <h3>{val.title}</h3>
             <p>{val.description}</p>
-            <button onClick={() => handleDelete(val.id)}>Delete</button>
+            <button 
+            onClick={() => handleDelete(val.id)}
+            style={{display: 'block', margin: '10px 0'}}
+          >
+            Delete
+          </button>
           </div>
         )
       })}
