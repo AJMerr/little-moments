@@ -51,8 +51,10 @@ function Homepage() {
 
       {images.map((val, key) => {
         return (
-          <div key={key}>
-            <img src={val.s3Url} alt="test" height="800" width="600"/>
+          <div key={key} style={{ marginBottom: '20px', padding: '10px', border: '1px solid #ccc' }}>
+            {val.s3Url && (
+              <img src={val.s3Url} alt="test" height="800" width="600"/>
+            )}
             <h3>{val.title}</h3>
             <p>{val.description}</p>
             <button 
@@ -64,7 +66,6 @@ function Homepage() {
           </div>
         )
       })}
-
     </div>
   )
 }
