@@ -11,11 +11,9 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
-      const signInResult = await signIn({ username: email, password })
-      console.log('Sign in successful:', signInResult)
-      if (signInResult.isSignedIn) {
-        navigate('/', { replace: true })
-      }
+      await signIn({ username: email, password })
+      // If sign in is successful (no error thrown), navigate to homepage
+      navigate('/', { replace: true })
     } catch (error) {
       console.error('Sign in error:', error)
       setError(error.message)
