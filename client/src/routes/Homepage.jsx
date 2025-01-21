@@ -9,6 +9,8 @@ function Homepage() {
   const [editingId, setEditingId] = useState(null)
   const [editTitle, setEditTitle] = useState("")
   const [editDescription, setEditDescription] = useState("")
+  const [selectedImage, setSelectedImage] = useState(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   useEffect(() => {
     const fetchAllImages = async () => {
@@ -83,6 +85,16 @@ function Homepage() {
     setEditDescription(image.description)
   }
 
+  const handleImageClick = async (id) => {
+    try {
+      const res = await axios.get(`/api/${id}`)
+      setSelectedImage(res.data)
+      setIsModalOpen(true)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-neutral-50 to-neutral-100 px-4 py-8 md:px-8 lg:px-16">
       {/* Upload Form */}
@@ -136,7 +148,10 @@ function Homepage() {
             key={key} 
             className="break-inside-avoid group bg-white/80 backdrop-blur supports-[backdrop-filter]:bg-white/60 rounded-xl shadow-sm border border-neutral-200/50 overflow-hidden hover:shadow-xl transition-all duration-300 animate-fade-in"
           >
-            <div className="relative aspect-[4/5] overflow-hidden">
+            <div 
+              className="relative aspect-[4/5] overflow-hidden cursor-pointer"
+              onClick={() => handleImageClick(val.id)}
+            >
               <img 
                 src={val.s3Url} 
                 alt={val.title} 
@@ -206,6 +221,49 @@ function Homepage() {
           </div>
         ))}
       </div>
+
+      {isModalOpen && selectedImage && (
+        <div 
+          className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          onClick={() => setIsModalOpen(false)}
+        >
+          <div 
+            className="relative max-w-7xl w-full bg-white/80 backdrop-blur supports-[backdrop-filter]:bg-white/60 rounded-xl shadow-2xl overflow-hidden"
+            onClick={e => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setIsModalOpen(false)}
+              className="absolute top-4 right-4 text-white bg-black/50 rounded-full p-2 hover:bg-black/70 transition-colors"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+            
+            <div className="flex flex-col lg:flex-row">
+              <div className="lg:flex-1">
+                <img 
+                  src={selectedImage.s3Url} 
+                  alt={selectedImage.title}
+                  className="w-full h-full object-contain max-h-[80vh]"
+                />
+              </div>
+              
+              <div className="p-6 lg:w-96 bg-white/90">
+                <h2 className="text-2xl font-bold text-neutral-800 mb-2">
+                  {selectedImage.title}
+                </h2>
+                <p className="text-neutral-600 mb-4">
+                  {selectedImage.description}
+                </p>
+                <div className="text-sm text-neutral-500">
+                  Added {new Date(selectedImage.createdAt).toLocaleDateString()}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
