@@ -1,12 +1,12 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { createBrowserRouter, RouterProvider, Outlet } from 'react-router-dom'
-import { AuthProvider } from './context/AuthContext'
-import ProtectedRoute from './components/ProtectedRoute'
 import Homepage from './routes/Homepage'
 import Login from './routes/Login'
 import Register from './routes/Register'
 import Navbar from './routes/Navbar'
+import { AuthProvider } from './auth/AuthContext'
+import ProtectedRoute from './auth/ProtectedRoute'
 import './index.css'
 
 const Layout = () => {
