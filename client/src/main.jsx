@@ -8,6 +8,7 @@ import Navbar from './routes/Navbar'
 import { AuthProvider } from './auth/AuthContext'
 import ProtectedRoute from './auth/ProtectedRoute'
 import './index.css'
+import './config/cognito'
 
 const Layout = () => {
   return (
