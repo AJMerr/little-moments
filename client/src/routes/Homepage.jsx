@@ -29,6 +29,17 @@ function Homepage() {
     await axios.post("/api/", formData, { headers: { 'Content-Type': 'multipart/form-data' } })
   }
 
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`/api/${id}`)
+      // Refresh the images list after deletion
+      const res = await axios.get("/api/")
+      setImages(res.data)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   return (
     <div>
       <form onSubmit={submit}>
@@ -40,11 +51,12 @@ function Homepage() {
 
       {images.map((val, key) => {
         return (
-        <div>
-            <img src={val.s3Url} alt="test" key={key} height="800" width="600"/>
+          <div key={key}>
+            <img src={val.s3Url} alt="test" height="800" width="600"/>
             <h3>{val.title}</h3>
             <p>{val.description}</p>
-        </div>
+            <button onClick={() => handleDelete(val.id)}>Delete</button>
+          </div>
         )
       })}
 
