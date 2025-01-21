@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { signIn } from 'aws-amplify/auth'
+import { signIn, getCurrentUser } from 'aws-amplify/auth'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../auth/AuthContext'
 
@@ -13,8 +13,9 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
-      const signInResult = await signIn({ username: email, password })
-      setUser(signInResult) // Update the auth context
+      await signIn({ username: email, password })
+      const currentUser = await getCurrentUser()
+      setUser(currentUser)
       navigate('/', { replace: true })
     } catch (error) {
       console.error('Sign in error:', error)
