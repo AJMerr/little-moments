@@ -3,9 +3,12 @@ import axios from "axios"
 
 function Homepage() {
   const [file, setFile] = useState()
-  const [title, setTitle] = useState()
-  const [description, setDescription] = useState()
+  const [title, setTitle] = useState("")
+  const [description, setDescription] = useState("")
   const [images, setImages] = useState([])
+  const [editingId, setEditingId] = useState(null)
+  const [editTitle, setEditTitle] = useState("")
+  const [editDescription, setEditDescription] = useState("")
 
   useEffect(() => {
     const fetchAllImages = async () => {
@@ -38,6 +41,27 @@ function Homepage() {
     } catch (error) {
       console.error(error)
     }
+  }
+
+  const handleEdit = async (id) => {
+    try {
+      await axios.put(`/api/${id}`, {
+        title: editTitle,
+        description: editDescription
+      })
+      // Refresh the images list after edit
+      const res = await axios.get("/api/")
+      setImages(res.data)
+      setEditingId(null) // Close edit mode
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  const startEditing = (image) => {
+    setEditingId(image.id)
+    setEditTitle(image.title)
+    setEditDescription(image.description)
   }
 
   return (
@@ -102,17 +126,63 @@ function Homepage() {
               <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             </div>
             <div className="p-4">
-              <h3 className="text-lg font-semibold text-neutral-800 mb-1">{val.title}</h3>
-              <p className="text-sm text-neutral-600 mb-4">{val.description}</p>
-              <button 
-                onClick={() => handleDelete(val.id)}
-                className="text-sm text-red-600 hover:text-red-700 font-medium flex items-center gap-1 transition-colors"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                </svg>
-                Delete
-              </button>
+              {editingId === val.id ? (
+                <div className="space-y-3">
+                  <input
+                    type="text"
+                    value={editTitle}
+                    onChange={(e) => setEditTitle(e.target.value)}
+                    className="w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm focus:ring-2 focus:ring-violet-500 focus:border-transparent"
+                    placeholder="Edit title"
+                  />
+                  <input
+                    type="text"
+                    value={editDescription}
+                    onChange={(e) => setEditDescription(e.target.value)}
+                    className="w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm focus:ring-2 focus:ring-violet-500 focus:border-transparent"
+                    placeholder="Edit description"
+                  />
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => handleEdit(val.id)}
+                      className="flex-1 bg-violet-600 text-white py-2 px-3 rounded-lg text-sm font-medium hover:bg-violet-700 transition-colors"
+                    >
+                      Save
+                    </button>
+                    <button
+                      onClick={() => setEditingId(null)}
+                      className="flex-1 bg-neutral-200 text-neutral-700 py-2 px-3 rounded-lg text-sm font-medium hover:bg-neutral-300 transition-colors"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <h3 className="text-lg font-semibold text-neutral-800 mb-1">{val.title}</h3>
+                  <p className="text-sm text-neutral-600 mb-4">{val.description}</p>
+                  <div className="flex gap-2">
+                    <button 
+                      onClick={() => startEditing(val)}
+                      className="text-sm text-violet-600 hover:text-violet-700 font-medium flex items-center gap-1 transition-colors"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                      </svg>
+                      Edit
+                    </button>
+                    <button 
+                      onClick={() => handleDelete(val.id)}
+                      className="text-sm text-red-600 hover:text-red-700 font-medium flex items-center gap-1 transition-colors"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                      Delete
+                    </button>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         ))}
