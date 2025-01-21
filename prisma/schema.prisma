@@ -14,11 +14,10 @@ datasource db {
 }
 
 model User {
-    id Int @id @default(autoincrement())
-    name String
-    email String
-    password String
-  }
+  id    Int    @id @default(autoincrement())
+  email String @unique
+  name  String
+}
 
 model Photo {
     id Int @id @default(autoincrement())
