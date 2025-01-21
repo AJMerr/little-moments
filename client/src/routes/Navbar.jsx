@@ -47,7 +47,7 @@ function Navbar() {
             {user ? (
               <>
                 <span className="text-neutral-600 font-medium">
-                  {user.name}
+                  {user.username}
                 </span>
                 <button
                   onClick={handleSignOut}
@@ -126,7 +126,7 @@ function Navbar() {
             {user ? (
               <>
                 <span className="block px-3 py-2 text-neutral-600 font-medium">
-                  {user.name}
+                  {user.username}
                 </span>
                 <button
                   onClick={handleSignOut}
