@@ -11,9 +11,12 @@
   "author": "Austin Merrill",
   "license": "ISC",
   "dependencies": {
+    "@aws-amplify/auth": "^6.10.0",
+    "@aws-sdk/client-cognito-identity-provider": "^3.731.1",
     "@aws-sdk/client-s3": "^3.537.0",
     "@aws-sdk/s3-request-presigner": "^3.540.0",
     "@prisma/client": "^5.11.0",
+    "amazon-cognito-identity-js": "^6.3.12",
     "axios": "^1.6.8",
     "concurrently": "^8.2.2",
     "cors": "^2.8.5",
