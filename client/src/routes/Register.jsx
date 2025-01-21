@@ -18,9 +18,12 @@ function Register() {
         await signUp({
           username: email,
           password,
-          attributes: {
-            email,
-            name,
+          options: {
+            userAttributes: {
+              email,
+              'name.formatted': name
+            },
+            autoSignIn: true
           }
         })
         setNeedsConfirmation(true)
