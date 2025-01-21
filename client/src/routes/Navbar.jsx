@@ -1,8 +1,21 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { signOut } from 'aws-amplify/auth'
+import { useAuth } from '../auth/AuthContext'
 
 function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const { user } = useAuth()
+  const navigate = useNavigate()
+
+  const handleSignOut = async () => {
+    try {
+      await signOut()
+      navigate('/login', { replace: true })
+    } catch (error) {
+      console.error('Error signing out:', error)
+    }
+  }
 
   return (
     <nav className="bg-white/80 backdrop-blur supports-[backdrop-filter]:bg-white/60 sticky top-0 z-50 border-b border-neutral-200/50">
@@ -30,18 +43,34 @@ function Navbar() {
             >
               Albums
             </Link>
-            <Link 
-              to="/login" 
-              className="text-neutral-600 hover:text-violet-600 transition-colors font-medium"
-            >
-              Login
-            </Link>
-            <Link 
-              to="/register" 
-              className="bg-violet-600 text-white px-4 py-2 rounded-lg hover:bg-violet-700 transition-colors font-medium"
-            >
-              Register
-            </Link>
+            {user ? (
+              <>
+                <span className="text-neutral-600 font-medium">
+                  {user.username}
+                </span>
+                <button
+                  onClick={handleSignOut}
+                  className="bg-violet-600 text-white px-4 py-2 rounded-lg hover:bg-violet-700 transition-colors font-medium"
+                >
+                  Sign Out
+                </button>
+              </>
+            ) : (
+              <>
+                <Link 
+                  to="/login" 
+                  className="text-neutral-600 hover:text-violet-600 transition-colors font-medium"
+                >
+                  Login
+                </Link>
+                <Link 
+                  to="/register" 
+                  className="bg-violet-600 text-white px-4 py-2 rounded-lg hover:bg-violet-700 transition-colors font-medium"
+                >
+                  Register
+                </Link>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -93,18 +122,34 @@ function Navbar() {
             >
               Albums
             </Link>
-            <Link
-              to="/login"
-              className="block px-3 py-2 rounded-lg text-neutral-600 hover:text-violet-600 hover:bg-violet-50 transition-colors font-medium"
-            >
-              Login
-            </Link>
-            <Link
-              to="/register"
-              className="block px-3 py-2 rounded-lg text-violet-600 bg-violet-50 hover:bg-violet-100 transition-colors font-medium"
-            >
-              Register
-            </Link>
+            {user ? (
+              <>
+                <span className="block px-3 py-2 text-neutral-600 font-medium">
+                  {user.username}
+                </span>
+                <button
+                  onClick={handleSignOut}
+                  className="block w-full text-left px-3 py-2 rounded-lg text-violet-600 bg-violet-50 hover:bg-violet-100 transition-colors font-medium"
+                >
+                  Sign Out
+                </button>
+              </>
+            ) : (
+              <>
+                <Link
+                  to="/login"
+                  className="block px-3 py-2 rounded-lg text-neutral-600 hover:text-violet-600 hover:bg-violet-50 transition-colors font-medium"
+                >
+                  Login
+                </Link>
+                <Link
+                  to="/register"
+                  className="block px-3 py-2 rounded-lg text-violet-600 bg-violet-50 hover:bg-violet-100 transition-colors font-medium"
+                >
+                  Register
+                </Link>
+              </>
+            )}
           </div>
         </div>
       )}
