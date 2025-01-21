@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { signUp, confirmSignUp, signIn } from 'aws-amplify/auth'
+import { signUp, confirmSignUp, signIn, signOut } from 'aws-amplify/auth'
 import { useNavigate } from 'react-router-dom'
 
 function Register() {
@@ -32,6 +32,13 @@ function Register() {
           username: email,
           confirmationCode
         })
+        // Sign out any existing user before signing in
+        try {
+          await signOut()
+        } catch (error) {
+          console.log('No user was signed in')
+        }
+        // Now sign in with the new credentials
         await signIn({
           username: email,
           password
