@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
-import { Auth } from 'aws-amplify'
+import { Amplify } from 'aws-amplify'
+import { signIn } from 'aws-amplify/auth'
 import { useNavigate } from 'react-router-dom'
 
 function Login() {
@@ -11,7 +12,7 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
-      await Auth.signIn(email, password)
+      await signIn({ username: email, password })
       navigate('/')
     } catch (error) {
       setError(error.message)

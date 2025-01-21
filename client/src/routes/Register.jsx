@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Auth } from 'aws-amplify'
+import { signUp, confirmSignUp } from 'aws-amplify/auth'
 import { useNavigate } from 'react-router-dom'
 
 function Register() {
@@ -15,7 +15,7 @@ function Register() {
     e.preventDefault()
     try {
       if (!needsConfirmation) {
-        await Auth.signUp({
+        await signUp({
           username: email,
           password,
           attributes: {
@@ -25,7 +25,10 @@ function Register() {
         })
         setNeedsConfirmation(true)
       } else {
-        await Auth.confirmSignUp(email, confirmationCode)
+        await confirmSignUp({
+          username: email,
+          confirmationCode
+        })
         navigate('/login')
       }
     } catch (error) {
