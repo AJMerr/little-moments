@@ -21,7 +21,7 @@ function Register() {
           options: {
             userAttributes: {
               email,
-              'name.formatted': name
+              name
             },
             autoSignIn: true
           }
