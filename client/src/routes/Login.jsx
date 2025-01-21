@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import { Amplify } from 'aws-amplify'
 import { signIn } from 'aws-amplify/auth'
 import { useNavigate } from 'react-router-dom'
 
@@ -12,9 +11,13 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
-      await signIn({ username: email, password })
-      navigate('/')
+      const signInResult = await signIn({ username: email, password })
+      console.log('Sign in successful:', signInResult)
+      if (signInResult.isSignedIn) {
+        navigate('/', { replace: true })
+      }
     } catch (error) {
+      console.error('Sign in error:', error)
       setError(error.message)
     }
   }
