@@ -25,11 +25,30 @@ function Homepage() {
   const submit = async event => {
     event.preventDefault()
 
-    const formData = new FormData();
-    formData.append("image", file)
-    formData.append("title", title)
-    formData.append("description", description)
-    await axios.post("/api/", formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+    try {
+      const formData = new FormData();
+      formData.append("image", file)
+      formData.append("title", title)
+      formData.append("description", description)
+      
+      await axios.post("/api/", formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+      
+      // Reset form
+      setFile(null)
+      setTitle("")
+      setDescription("")
+      
+      // Refresh images list
+      const res = await axios.get("/api/")
+      setImages(res.data)
+
+      // Reset the file input by clearing its value
+      const fileInput = document.querySelector('input[type="file"]')
+      if (fileInput) fileInput.value = ""
+      
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   const handleDelete = async (id) => {
