@@ -1,18 +1,20 @@
 import React, { useState } from 'react'
 import { signIn } from 'aws-amplify/auth'
 import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../auth/AuthContext'
 
 function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const navigate = useNavigate()
+  const { setUser } = useAuth()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
-      await signIn({ username: email, password })
-      // If sign in is successful (no error thrown), navigate to homepage
+      const signInResult = await signIn({ username: email, password })
+      setUser(signInResult) // Update the auth context
       navigate('/', { replace: true })
     } catch (error) {
       console.error('Sign in error:', error)

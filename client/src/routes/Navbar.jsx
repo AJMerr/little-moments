@@ -5,12 +5,13 @@ import { useAuth } from '../auth/AuthContext'
 
 function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const { user } = useAuth()
+  const { user, setUser } = useAuth()
   const navigate = useNavigate()
 
   const handleSignOut = async () => {
     try {
       await signOut()
+      setUser(null)
       navigate('/login', { replace: true })
     } catch (error) {
       console.error('Error signing out:', error)
