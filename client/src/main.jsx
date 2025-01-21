@@ -1,18 +1,33 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import { createBrowserRouter, RouterProvider, Outlet } from 'react-router-dom'
 import Homepage from './routes/Homepage'
-import './index.css'
+import Navbar from './routes/Navbar'
 import SinglePhoto from './routes/SinglePhoto'
+import './index.css'
+
+const Layout = () => {
+  return (
+    <>
+      <Navbar />
+      <Outlet />
+    </>
+  )
+}
 
 const router = createBrowserRouter([
   {
-    path: "/",
-    element: <Homepage />,
-  },
-  {
-    path: "/:id",
-    element: <SinglePhoto />
+    element: <Layout />,
+    children: [
+      {
+        path: "/",
+        element: <Homepage />,
+      },
+      {
+        path: "/:id",
+        element: <SinglePhoto />
+      }
+    ]
   }
 ])
 
