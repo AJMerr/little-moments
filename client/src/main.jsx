@@ -5,6 +5,8 @@ import Homepage from './routes/Homepage'
 import Login from './routes/Login'
 import Register from './routes/Register'
 import Navbar from './routes/Navbar'
+import Albums from './routes/Albums'
+import SingleAlbum from './routes/SingleAlbum'
 import { AuthProvider } from './auth/AuthContext'
 import ProtectedRoute from './auth/ProtectedRoute'
 import './index.css'
@@ -28,6 +30,22 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <Homepage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/albums",
+        element: (
+          <ProtectedRoute>
+            <Albums />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/albums/:id",
+        element: (
+          <ProtectedRoute>
+            <SingleAlbum />
           </ProtectedRoute>
         ),
       },

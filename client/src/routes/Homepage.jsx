@@ -11,6 +11,8 @@ function Homepage() {
   const [editDescription, setEditDescription] = useState("")
   const [selectedImage, setSelectedImage] = useState(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [albums, setAlbums] = useState([])
+  const [selectedAlbumId, setSelectedAlbumId] = useState("")
 
   useEffect(() => {
     const fetchAllImages = async () => {
@@ -21,7 +23,18 @@ function Homepage() {
         console.error(error)
       }
     }
+    
+    const fetchAlbums = async () => {
+      try {
+        const res = await axios.get("/api/albums")
+        setAlbums(res.data)
+      } catch (error) {
+        console.error(error)
+      }
+    }
+
     fetchAllImages()
+    fetchAlbums()
   }, [])
 
   const submit = async event => {
@@ -32,6 +45,9 @@ function Homepage() {
       formData.append("image", file)
       formData.append("title", title)
       formData.append("description", description)
+      if (selectedAlbumId) {
+        formData.append("albumId", selectedAlbumId)
+      }
       
       await axios.post("/api/", formData, { headers: { 'Content-Type': 'multipart/form-data' } })
       
@@ -39,6 +55,7 @@ function Homepage() {
       setFile(null)
       setTitle("")
       setDescription("")
+      setSelectedAlbumId("")
       
       // Refresh images list
       const res = await axios.get("/api/")
@@ -104,39 +121,62 @@ function Homepage() {
         </h1>
         <form onSubmit={submit} className="space-y-4 bg-white/80 backdrop-blur supports-[backdrop-filter]:bg-white/60 rounded-xl shadow-lg border border-neutral-200/50 p-6">
           <div className="space-y-2">
-            <label className="block text-sm font-medium text-neutral-700">Upload Image</label>
-            <input 
-              onChange={e => setFile(e.target.files[0])} 
-              type="file" 
+            <label className="block text-sm font-medium text-neutral-700">
+              Upload Image
+            </label>
+            <input
+              onChange={e => setFile(e.target.files[0])}
+              type="file"
               accept="image/*"
-              className="w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100"
+              className="w-full text-sm text-neutral-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100 transition-all"
+              required
             />
           </div>
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-neutral-700">Title</label>
-            <input 
-              value={title} 
-              onChange={e => setTitle(e.target.value)} 
-              type="text" 
-              placeholder="Enter title"
-              className="w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm focus:ring-2 focus:ring-violet-500 focus:border-transparent"
+          <div>
+            <label className="block text-sm font-medium text-neutral-700">
+              Title
+            </label>
+            <input
+              onChange={e => setTitle(e.target.value)}
+              type="text"
+              value={title}
+              className="mt-1 w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm focus:ring-2 focus:ring-violet-500 focus:border-transparent"
+              required
             />
           </div>
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-neutral-700">Description</label>
-            <input 
-              value={description} 
-              onChange={e => setDescription(e.target.value)} 
-              type="text" 
-              placeholder="Enter description"
-              className="w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm focus:ring-2 focus:ring-violet-500 focus:border-transparent"
+          <div>
+            <label className="block text-sm font-medium text-neutral-700">
+              Description
+            </label>
+            <input
+              onChange={e => setDescription(e.target.value)}
+              type="text"
+              value={description}
+              className="mt-1 w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm focus:ring-2 focus:ring-violet-500 focus:border-transparent"
             />
           </div>
-          <button 
+          <div>
+            <label className="block text-sm font-medium text-neutral-700">
+              Album (Optional)
+            </label>
+            <select
+              value={selectedAlbumId}
+              onChange={e => setSelectedAlbumId(e.target.value)}
+              className="mt-1 w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm focus:ring-2 focus:ring-violet-500 focus:border-transparent"
+            >
+              <option value="">No Album</option>
+              {albums.map(album => (
+                <option key={album.id} value={album.id}>
+                  {album.title}
+                </option>
+              ))}
+            </select>
+          </div>
+          <button
             type="submit"
             className="w-full bg-violet-600 text-white py-2 px-4 rounded-lg text-sm font-medium hover:bg-violet-700 focus:ring-2 focus:ring-offset-2 focus:ring-violet-500 transition-colors"
           >
-            Upload Image
+            Upload
           </button>
         </form>
       </div>
