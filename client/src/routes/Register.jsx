@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { signUp, confirmSignUp, signIn, signOut } from 'aws-amplify/auth'
 import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../auth/AuthContext'
 
 function Register() {
   const [email, setEmail] = useState('')
@@ -10,6 +11,7 @@ function Register() {
   const [confirmationCode, setConfirmationCode] = useState('')
   const [needsConfirmation, setNeedsConfirmation] = useState(false)
   const navigate = useNavigate()
+  const { setUser } = useAuth()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -32,17 +34,17 @@ function Register() {
           username: email,
           confirmationCode
         })
-        // Sign out any existing user before signing in
         try {
           await signOut()
         } catch (error) {
           console.log('No user was signed in')
         }
-        // Now sign in with the new credentials
         await signIn({
           username: email,
           password
         })
+        const currentUser = await getCurrentUser()
+        setUser(currentUser)
         navigate('/')
       }
     } catch (error) {
