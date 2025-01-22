@@ -37,14 +37,106 @@ const s3 = new S3Client({
   region: BUCKET_REGION
 })
 
-// API route for uploading images
+// API route for creating a new album
+lmRouter.post("/api/albums", async (req, res) => {
+  try {
+    const album = await prisma.album.create({
+      data: {
+        title: req.body.title,
+        description: req.body.description
+      }
+    })
+    res.send(album)
+  } catch (error) {
+    console.error(error)
+    res.status(500).send(error)
+  }
+})
+
+// API route for getting all albums
+lmRouter.get("/api/albums", async (req, res) => {
+  try {
+    const albums = await prisma.album.findMany({
+      include: {
+        photos: true
+      }
+    })
+    
+    // Get signed URLs for all photos in all albums
+    for (let album of albums) {
+      for (let photo of album.photos) {
+        const command = new GetObjectCommand({
+          Bucket: BUCKET_NAME,
+          Key: photo.s3Key
+        })
+        const url = await getSignedUrl(s3, command, { expiresIn: 3600 })
+        photo.s3Url = url
+      }
+    }
+    
+    res.send(albums)
+  } catch (error) {
+    console.error(error)
+    res.status(500).send(error)
+  }
+})
+
+// API route for getting a single album
+lmRouter.get("/api/albums/:id", async (req, res) => {
+  try {
+    const id = +req.params.id
+    const album = await prisma.album.findUnique({
+      where: { id },
+      include: {
+        photos: true
+      }
+    })
+    
+    // Get signed URLs for all photos in the album
+    for (let photo of album.photos) {
+      const command = new GetObjectCommand({
+        Bucket: BUCKET_NAME,
+        Key: photo.s3Key
+      })
+      const url = await getSignedUrl(s3, command, { expiresIn: 3600 })
+      photo.s3Url = url
+    }
+    
+    res.send(album)
+  } catch (error) {
+    console.error(error)
+    res.status(500).send(error)
+  }
+})
+
+// API route for adding photos to an album
+lmRouter.post("/api/albums/:id/photos", async (req, res) => {
+  try {
+    const albumId = +req.params.id
+    const photoIds = req.body.photoIds // Array of photo IDs to add
+
+    const album = await prisma.album.update({
+      where: { id: albumId },
+      data: {
+        photos: {
+          connect: photoIds.map(id => ({ id: +id }))
+        }
+      },
+      include: {
+        photos: true
+      }
+    })
+    res.send(album)
+  } catch (error) {
+    console.error(error)
+    res.status(500).send(error)
+  }
+})
+
+// Modify existing photo upload to include optional albumId
 lmRouter.post("/api", upload.single("image"), async (req, res) => {
   const imageName = randImageName(req.file.originalname)
-  console.log("req.body", req.body)
-  console.log("req.file", req.file)
-
-  req.file.buffer
-
+  
   const params = {
     Bucket: BUCKET_NAME,
     Key: imageName + "." + req.file.mimetype.split("/")[1],
@@ -59,7 +151,12 @@ lmRouter.post("/api", upload.single("image"), async (req, res) => {
     data: {
       title: req.body.title,
       description: req.body.description,
-      s3Key: imageName + "." + req.file.mimetype.split("/")[1]
+      s3Key: imageName + "." + req.file.mimetype.split("/")[1],
+      ...(req.body.albumId && {
+        albums: {
+          connect: { id: +req.body.albumId }
+        }
+      })
     }
   })
   res.send(imageData)
