@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { signUp, confirmSignUp, signIn, signOut } from 'aws-amplify/auth'
+import { signUp, confirmSignUp, signIn, signOut, getCurrentUser } from 'aws-amplify/auth'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../auth/AuthContext'
 
