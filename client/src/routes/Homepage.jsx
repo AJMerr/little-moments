@@ -13,6 +13,7 @@ function Homepage() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [albums, setAlbums] = useState([])
   const [selectedAlbumId, setSelectedAlbumId] = useState("")
+  const [editAlbumId, setEditAlbumId] = useState("")
 
   useEffect(() => {
     const fetchAllImages = async () => {
@@ -85,12 +86,16 @@ function Homepage() {
     try {
       await axios.put(`/api/${id}`, {
         title: editTitle,
-        description: editDescription
+        description: editDescription,
+        albumId: editAlbumId || null
       })
       // Refresh the images list after edit
       const res = await axios.get("/api/")
       setImages(res.data)
       setEditingId(null) // Close edit mode
+      setEditTitle("")
+      setEditDescription("")
+      setEditAlbumId("")
     } catch (error) {
       console.error(error)
     }
@@ -100,6 +105,7 @@ function Homepage() {
     setEditingId(image.id)
     setEditTitle(image.title)
     setEditDescription(image.description)
+    setEditAlbumId(image.albums?.[0]?.id || "") // Set the first album if it exists
   }
 
   const handleImageClick = async (id) => {
@@ -216,6 +222,18 @@ function Homepage() {
                     className="w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm focus:ring-2 focus:ring-violet-500 focus:border-transparent"
                     placeholder="Edit description"
                   />
+                  <select
+                    value={editAlbumId}
+                    onChange={e => setEditAlbumId(e.target.value)}
+                    className="w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm focus:ring-2 focus:ring-violet-500 focus:border-transparent"
+                  >
+                    <option value="">No Album</option>
+                    {albums.map(album => (
+                      <option key={album.id} value={album.id}>
+                        {album.title}
+                      </option>
+                    ))}
+                  </select>
                   <div className="flex gap-2">
                     <button
                       onClick={() => handleEdit(val.id)}
@@ -224,7 +242,12 @@ function Homepage() {
                       Save
                     </button>
                     <button
-                      onClick={() => setEditingId(null)}
+                      onClick={() => {
+                        setEditingId(null)
+                        setEditTitle("")
+                        setEditDescription("")
+                        setEditAlbumId("")
+                      }}
                       className="flex-1 bg-neutral-200 text-neutral-700 py-2 px-3 rounded-lg text-sm font-medium hover:bg-neutral-300 transition-colors"
                     >
                       Cancel
@@ -234,7 +257,12 @@ function Homepage() {
               ) : (
                 <>
                   <h3 className="text-lg font-semibold text-neutral-800 mb-1">{val.title}</h3>
-                  <p className="text-sm text-neutral-600 mb-4">{val.description}</p>
+                  <p className="text-sm text-neutral-600 mb-2">{val.description}</p>
+                  {val.albums?.[0] && (
+                    <p className="text-sm text-violet-600 mb-4">
+                      Album: {val.albums[0].title}
+                    </p>
+                  )}
                   <div className="flex gap-2">
                     <button 
                       onClick={() => startEditing(val)}
