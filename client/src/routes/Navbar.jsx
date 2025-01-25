@@ -32,20 +32,20 @@ function Navbar() {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
-            <Link 
-              to="/" 
-              className="text-neutral-600 hover:text-violet-600 transition-colors font-medium"
-            >
-              Home
-            </Link>
-            <Link 
-              to="/albums" 
-              className="text-neutral-600 hover:text-violet-600 transition-colors font-medium"
-            >
-              Albums
-            </Link>
             {user ? (
               <>
+                <Link 
+                  to="/" 
+                  className="text-neutral-600 hover:text-violet-600 transition-colors font-medium"
+                >
+                  Home
+                </Link>
+                <Link 
+                  to="/albums" 
+                  className="text-neutral-600 hover:text-violet-600 transition-colors font-medium"
+                >
+                  Albums
+                </Link>
                 <span className="text-neutral-600 font-medium">
                   {user.username}
                 </span>
@@ -111,20 +111,20 @@ function Navbar() {
       {isMenuOpen && (
         <div className="md:hidden">
           <div className="px-2 pt-2 pb-3 space-y-1 bg-white/80 backdrop-blur supports-[backdrop-filter]:bg-white/60 border-b border-neutral-200/50">
-            <Link
-              to="/"
-              className="block px-3 py-2 rounded-lg text-neutral-600 hover:text-violet-600 hover:bg-violet-50 transition-colors font-medium"
-            >
-              Home
-            </Link>
-            <Link
-              to="/albums"
-              className="block px-3 py-2 rounded-lg text-neutral-600 hover:text-violet-600 hover:bg-violet-50 transition-colors font-medium"
-            >
-              Albums
-            </Link>
             {user ? (
               <>
+                <Link
+                  to="/"
+                  className="block px-3 py-2 rounded-lg text-neutral-600 hover:text-violet-600 hover:bg-violet-50 transition-colors font-medium"
+                >
+                  Home
+                </Link>
+                <Link
+                  to="/albums"
+                  className="block px-3 py-2 rounded-lg text-neutral-600 hover:text-violet-600 hover:bg-violet-50 transition-colors font-medium"
+                >
+                  Albums
+                </Link>
                 <span className="block px-3 py-2 text-neutral-600 font-medium">
                   {user.username}
                 </span>
