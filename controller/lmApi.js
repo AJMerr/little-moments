@@ -205,16 +205,42 @@ lmRouter.get("/api/:id", async (req, res) => {
   }
 })
 
-// API Route for extracting image data
+// API route for updating an image
 lmRouter.put("/api/:id", async (req, res) => {
   try {
     const id = +req.params.id
-    const updatedPhoto = await prisma.photo.update({ where: { id }, data: req.body })
+    const { title, description, albumId } = req.body
+
+    // Update photo with album connection/disconnection
+    const updatedPhoto = await prisma.photo.update({
+      where: { id },
+      data: {
+        title,
+        description,
+        albums: {
+          // If albumId is null/empty, disconnect all albums
+          // If albumId exists, connect to that album and disconnect others
+          ...(albumId 
+            ? {
+                set: [], // First disconnect all existing albums
+                connect: { id: +albumId } // Then connect to the new album
+              }
+            : {
+                set: [] // Just disconnect all albums if no albumId provided
+              }
+          )
+        }
+      },
+      include: {
+        albums: true // Include albums in the response
+      }
+    })
 
     res.send(updatedPhoto)
 
   } catch (error) {
     console.error(error)
+    res.status(500).send(error)
   }
 })
 
